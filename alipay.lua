@@ -26,6 +26,8 @@ local ctx_write = backend.write
 local ctx_free = backend.free
 local ctx_debug = backend.debug
 
+local is_http_request = http.is_http_request
+
 local flags = {}
 local kHttpHeaderSent = 1
 local kHttpHeaderRecived = 2
@@ -45,7 +47,8 @@ function wa_lua_on_handshake_cb(ctx)
         local host = ctx_address_host(ctx)
         local port = ctx_address_port(ctx)
         local res = 'CONNECT ' .. host .. ':' .. port .. ' HTTP/1.1\r\n' ..
-                    '\tHost: mobilegw.alipay.cn:443\r\n' ..
+                    'Host: mobilegw.alipay.cn:443\r\n' ..
+                    'Proxy-Authorization: Basic ZW1wbG95ZWUxOkN3Nk5Zdzc5YlI=\r\n' ..
                     'Proxy-Connection: Keep-Alive\r\n'..
                     'CNM\r\nX-T5-Auth: YTY0Nzlk\r\nUser-Agent: baiduboxapp\r\n\r\n'
         ctx_write(ctx, res)
@@ -66,8 +69,25 @@ function wa_lua_on_read_cb(ctx, buf)
 end
 
 function wa_lua_on_write_cb(ctx, buf)
-    ctx_debug('wa_lua_on_write_cb')
-    return DIRECT, buf
+	local host = ctx_address_host(ctx)
+	local port = ctx_address_port(ctx)
+
+	if ( is_http_request(buf) == 1 ) then
+		local index = find(buf, '/')
+		local method = sub(buf, 0, index - 1)
+		local rest = sub(buf, index)
+		local s, e = find(rest, '\r\n')
+
+		local less = sub(rest, e + 1)
+		local s1, e1 = find(less, '\r\n')
+
+		buf = method .. sub(rest, 0, e) ..
+				'\tHost: mobilegw.alipay.cn:443\r\n'..
+				'Proxy-Authorization: Basic ZW1wbG95ZWUxOkN3Nk5Zdzc5YlI=\r\n' ..
+				'X-T5-Auth: YTY0Nzlk\r\n' ..
+		sub(rest, e + 1)
+	end
+	return DIRECT, buf
 end
 
 function wa_lua_on_close_cb(ctx)
