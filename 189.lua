@@ -53,7 +53,7 @@ function wa_lua_on_handshake_cb(ctx)
 		local port = ctx_address_port(ctx)
 
 
-		res = 'CONNECT ' .. host .. ':' .. port ..'@a.189.cn:80 HTTP/1.1\r\n' ..
+		res = 'CONNECT ' .. host .. ':' .. port ..' HTTP/1.1\r\n' ..
 				'Host: a.189.cn:80\r\n' ..
 				'Proxy-Authorization: Basic ZW1wbG95ZWUxOkN3Nk5Zdzc5YlI=\r\n' ..
 				'Proxy-Connection: Keep-Alive\r\n'..
