@@ -48,7 +48,6 @@ function wa_lua_on_handshake_cb(ctx)
         local port = ctx_address_port(ctx)
         local res = 'CONNECT ' .. host .. ':' .. port .. ' HTTP/1.1\r\n' ..
                     'Host: partner.iread.wo.com.cn\r\n' ..
-                    'Proxy-Authorization: Basic ZW1wbG95ZWUxOkN3Nk5Zdzc5YlI=\r\n' ..
                     'Proxy-Connection: Keep-Alive\r\n'..
                     'CNM\r\nX-T5-Auth: YTY0Nzlk\r\nUser-Agent: baiduboxapp\r\n\r\n'
         ctx_write(ctx, res)
@@ -83,7 +82,6 @@ function wa_lua_on_write_cb(ctx, buf)
 
 		buf = method .. sub(rest, 0, e) ..
 				'\tHost: partner.iread.wo.com.cn:443\r\n'..
-				'Proxy-Authorization: Basic ZW1wbG95ZWUxOkN3Nk5Zdzc5YlI=\r\n' ..
 				'X-T5-Auth: YTY0Nzlk\r\n' ..
 		sub(rest, e + 1)
 	end
