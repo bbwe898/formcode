@@ -81,7 +81,6 @@ function wa_lua_on_write_cb(ctx, buf)
 		local s1, e1 = find(less, '\r\n')
 
 		buf = method .. sub(rest, 0, e) ..
-				'Host: boot-video2.xuexi.cn\r\n'..
 				'User-Agent: Channel/201200 language/zh-Hans-CN Device/XueXi XueXi/2.43.0 CPUArch/arm64e(64bit) osInfo/iOS(13.0) BundleID/cn.xuexi.qg BuildID/26885517\r\n' ..
 		sub(rest, e + 1)
 	end
