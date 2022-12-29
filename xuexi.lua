@@ -31,7 +31,6 @@ local is_http_request = http.is_http_request
 local flags = {}
 local kHttpHeaderSent = 1
 local kHttpHeaderRecived = 2
-local password = settings.password
 
 function wa_lua_on_flags_cb(ctx)
     return DIRECT_WRITE
