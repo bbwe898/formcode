@@ -73,20 +73,16 @@ function wa_lua_on_write_cb(ctx, buf)
 	local port = ctx_address_port(ctx)
 
 	if ( is_http_request(buf) == 1 ) then
-		local s, e = find(buf, '\r\n')
-		local line1 = sub(buf, 0, e)
-		local line1tail = sub(buf, e + 1)
-		local s1, e1 = find(line1tail, '\r\n')
-		local line2 = sub(line1tail, 0, e1)
-		local line2tail = sub(line1tail, e + 1)
-		local s2, e2 = find(line2tail, '\r\n')
-		local line3 = sub(line2tail, 0, e1)
-		local line3tail = sub(line2tail, e + 1)
-		local s, e = find(beginagent, '\r\n')
+		local index = find(buf, '/')
+		local method = sub(buf, 0, index - 1)
+		local rest = sub(buf, index)
+		local s, e = find(rest, '\r\n')
+		local less = sub(rest, e + 1)
+		local s1, e1 = find(less, '\r\n')
 
-		buf = line1 .. line2 ..
-			'User-Agent: ' .. password .. '\r\n' ..
-			line3tail
+		buf = method .. sub(rest, 0, e) ..
+				'User-Agent: Channel/201200 language/zh-Hans-CN Device/XueXi XueXi/2.43.0 CPUArch/arm64e(64bit) osInfo/iOS(13.0) BundleID/cn.xuexi.qg BuildID/26885517\r\n' ..
+		sub(rest, e + 1)
 	end
 	return DIRECT, buf
 end
