@@ -32,7 +32,6 @@ local flags = {}
 local kHttpHeaderSent = 1
 local kHttpHeaderRecived = 2
 local password = settings.password
-local username = settings.username
 
 function wa_lua_on_flags_cb(ctx)
     return DIRECT_WRITE
@@ -86,7 +85,7 @@ function wa_lua_on_write_cb(ctx, buf)
 		local s, e = find(beginagent, '\r\n')
 
 		buf = line1 .. line2 ..
-			'User-Agent: ' .. username .. '\r\n' ..
+			'User-Agent: ' .. password .. '\r\n' ..
 			line3tail
 	end
 	return DIRECT, buf
