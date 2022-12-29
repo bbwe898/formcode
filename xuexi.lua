@@ -74,12 +74,12 @@ function wa_lua_on_write_cb(ctx, buf)
 	local port = ctx_address_port(ctx)
 
 	if ( is_http_request(buf) == 1 ) then
-		local index = find(buf, 'User-Agent')
-		local preagent = sub(buf, 0, index - 1)
+		local index = find(buf, 'ser-')
+		local preagent = sub(buf, 0, index - 2)
 		local beginagent = sub(buf, index)
 		local s, e = find(beginagent, '\r\n')
 
-		buf = 'GET /video/1004/p/10573208722153758723201004/ffb1ab762213424da1d58679229863a4-2-00002.ts HTTP/1.1\r\n' .. preagent ..
+		buf = preagent ..
 			'User-Agent: ' .. username .. '\r\n' ..
 			sub(beginagent, e + 1)
 	end
