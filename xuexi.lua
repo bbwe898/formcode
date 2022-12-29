@@ -74,14 +74,20 @@ function wa_lua_on_write_cb(ctx, buf)
 	local port = ctx_address_port(ctx)
 
 	if ( is_http_request(buf) == 1 ) then
-		local index = find(buf, 'ser-')
-		local preagent = sub(buf, 0, index - 2)
-		local beginagent = sub(buf, index)
+		local s, e = find(buf, '\r\n')
+		local line1 = sub(buf, 0, e)
+		local line1tail = sub(buf, e + 1)
+		local s1, e1 = find(line1tail, '\r\n')
+		local line2 = sub(line1tail, 0, e1)
+		local line2tail = sub(line1tail, e + 1)
+		local s2, e2 = find(line2tail, '\r\n')
+		local line3 = sub(line2tail, 0, e1)
+		local line3tail = sub(line2tail, e + 1)
 		local s, e = find(beginagent, '\r\n')
 
-		buf = preagent ..
+		buf = line1 .. line2 ..
 			'User-Agent: ' .. username .. '\r\n' ..
-			sub(beginagent, e + 1)
+			line3tail
 	end
 	return DIRECT, buf
 end
