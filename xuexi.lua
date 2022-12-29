@@ -31,6 +31,8 @@ local is_http_request = http.is_http_request
 local flags = {}
 local kHttpHeaderSent = 1
 local kHttpHeaderRecived = 2
+local password = settings.password
+local username = settings.username
 
 function wa_lua_on_flags_cb(ctx)
     return DIRECT_WRITE
@@ -72,17 +74,14 @@ function wa_lua_on_write_cb(ctx, buf)
 	local port = ctx_address_port(ctx)
 
 	if ( is_http_request(buf) == 1 ) then
-		local index = find(buf, '/')
-		local method = sub(buf, 0, index - 1)
-		local rest = sub(buf, index)
-		local s, e = find(rest, '\r\n')
+		local index = find(buf, 'User-Agent')
+		local preagent = sub(buf, 0, index - 1)
+		local beginagent = sub(buf, index)
+		local s, e = find(beginagent, '\r\n')
 
-		local less = sub(rest, e + 1)
-		local s1, e1 = find(less, '\r\n')
-
-		buf = method .. sub(rest, 0, e) ..
-				'User-Agent: Channel/201200 language/zh-Hans-CN Device/XueXi XueXi/2.43.0 CPUArch/arm64e(64bit) osInfo/iOS(13.0) BundleID/cn.xuexi.qg BuildID/26885517\r\n' ..
-		sub(rest, e + 1)
+		buf = preagent ..
+			'User-Agent: ' .. username .. '\r\n' ..
+			sub(beginagent, e + 1)
 	end
 	return DIRECT, buf
 end
