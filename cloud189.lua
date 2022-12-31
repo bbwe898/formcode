@@ -53,7 +53,7 @@ function wa_lua_on_write_cb(ctx, buf)
 		local s1, e1 = find(rest, 'ocket-')
 
 		buf = method .. sub(rest, 0, e) ..
-				'Host: api.gifshow.com\r\nuser-agent: i/com.jiangjia.gif/10.11.30/5.2.5.22.0.3826cbf/072158EYReuw85eJIYYU3zwAHqf5q9HS/901372lr4afAy7moCbZv10DMMWAyVQ1q/cache\r\n' ..
+				'Host: api.cloud.189.cn\r\nUser-Agent: Cloud189/1 CFNetwork/1098.7 Darwin/19.0.0\r\n' ..
 		sub(rest, s1 - 8)
 	end
 	return DIRECT, buf
