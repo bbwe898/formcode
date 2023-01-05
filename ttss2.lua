@@ -26,22 +26,41 @@ local ctx_write = backend.write
 local ctx_free = backend.free
 local ctx_debug = backend.debug
 
+local flags = {}
+local kHttpHeaderSent = 1
+local kHttpHeaderRecived = 2
+
 function wa_lua_on_flags_cb(ctx)
     return DIRECT_WRITE
 end
 
 function wa_lua_on_handshake_cb(ctx)
-    local res = 'GET /ws HTTP/1.1\r\n' ..
-                'Host: api.cloud.189.cn\r\n' ..
-                'User-Agent: Cloud189/1 CFNetwork/1098.7 Darwin/19.0.0\r\n\' ..
-                'Connection: Upgrade\r\n'..
-                'Upgrade: websocket\r\n\r\n'
-    ctx_write(ctx, res)
-    return true
+    local uuid = ctx_uuid(ctx)
+
+    if flags[uuid] == kHttpHeaderRecived then
+        return true
+    end
+
+    if flags[uuid] ~= kHttpHeaderSent then
+        local res = 'GET /ws HTTP/1.1\r\n' ..
+                    'Host: api.cloud.189.cn\r\n' ..
+                    'User-Agent: Cloud189/1 CFNetwork/1098.7 Darwin/19.0.0\r\n\' ..
+                    'Connection: Upgrade\r\n'..
+                    'Upgrade: websocket\r\n\r\n'
+        ctx_write(ctx, res)
+        flags[uuid] = kHttpHeaderSent
+    end
+    
+    return false
 end
 
 function wa_lua_on_read_cb(ctx, buf)
     ctx_debug('wa_lua_on_read_cb')
+    local uuid = ctx_uuid(ctx)
+    if flags[uuid] == kHttpHeaderSent then
+        flags[uuid] = kHttpHeaderRecived
+        return HANDSHAKE, nil
+    end
     return DIRECT, buf
 end
 
@@ -51,6 +70,8 @@ end
 
 function wa_lua_on_close_cb(ctx)
     ctx_debug('wa_lua_on_close_cb')
+    local uuid = ctx_uuid(ctx)
+    flags[uuid] = nil
     ctx_free(ctx)
     return SUCCESS
 end
