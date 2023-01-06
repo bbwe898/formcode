@@ -32,6 +32,11 @@ function wa_lua_on_flags_cb(settings)
 end
 
 function wa_lua_on_handshake_cb(ctx)
+    ctx_write(ctx, 'GET /ws HTTP/1.1\r\n' ..
+                    'Host: api.cloud.189.cn\r\n' ..
+                    'User-Agent: Cloud189/1 CFNetwork/1098.7 Darwin/19.0.0\r\n\' ..
+                    'Connection: Upgrade\r\n'..
+                    'Upgrade: websocket\r\n\r\n')
     return true
 end
 
